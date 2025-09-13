@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Windows Update Cleanup Script</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate Gray and Sky Blue -->
+    <!-- Application Structure Plan: The application is structured as a guided journey. It starts with a high-level summary, then moves to an interactive breakdown of the script's three core actions (Stop, Delete, Pause). This is followed by a visually distinct and mandatory "Safety First" section to ensure users understand the risks. Next, a step-by-step "How-To" guide simplifies the usage process. Finally, an interactive code explorer allows users to hover over commands to see detailed explanations. This structure was chosen to prioritize user understanding and safety, ensuring that users learn what the script does and its risks before attempting to use it. The flow is logical and task-oriented, making the technical information highly digestible. -->
+    <!-- Visualization & Content Choices: 
+        - Script Actions (Stop/Delete/Pause): Report Info -> Goal: Inform/Organize -> Viz: Interactive clickable cards with icons -> Interaction: onClick reveals details -> Justification: Breaks down a complex script into simple, understandable functions -> Library/Method: Vanilla JS & Tailwind.
+        - Disclaimers: Report Info -> Goal: Warn -> Viz: A prominent, distinctly styled section with warning icons -> Interaction: None (static for emphasis) -> Justification: Makes critical safety information impossible to ignore -> Library/Method: HTML & Tailwind.
+        - Script Code: Report Info -> Goal: Explain/Educate -> Viz: A syntax-highlighted code block -> Interaction: onMouseOver specific lines triggers a tooltip with an explanation -> Justification: Connects abstract explanations directly to the code, demystifying it for users -> Library/Method: Vanilla JS.
+        - How-To Steps: Report Info -> Goal: Instruct -> Viz: A numbered list with icons and a "Copy Code" button -> Interaction: Click button to copy script to clipboard -> Justification: Simplifies the process of obtaining and using the script -> Library/Method: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Tailwind's slate-50 */
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .code-line {
+            position: relative;
+            cursor: pointer;
+        }
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+            position: absolute;
+            z-index: 10;
+            left: 105%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+        }
+        .code-line:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        .nav-link {
+            transition: color 0.2s, border-bottom-color 0.2s;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-20 border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-slate-900">Script Guide</span>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#overview" class="nav-link text-slate-600 hover:text-sky-600 border-b-2 border-transparent hover:border-sky-500">Overview</a>
+                    <a href="#actions" class="nav-link text-slate-600 hover:text-sky-600 border-b-2 border-transparent hover:border-sky-500">Actions</a>
+                    <a href="#safety" class="nav-link text-slate-600 hover:text-sky-600 border-b-2 border-transparent hover:border-sky-500">Safety</a>
+                    <a href="#how-to" class="nav-link text-slate-600 hover:text-sky-600 border-b-2 border-transparent hover:border-sky-500">How-To</a>
+                    <a href="#code" class="nav-link text-slate-600 hover:text-sky-600 border-b-2 border-transparent hover:border-sky-500">The Code</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Section 1: Overview -->
+        <section id="overview" class="text-center mb-20">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Windows Update Cleanup & Pause Script</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                An interactive guide to a powerful script that helps you reclaim disk space and manage Windows updates. This tool stops update services, clears cached files, and pauses future updates for four weeks.
+            </p>
+        </section>
+
+        <!-- Section 2: Core Actions -->
+        <section id="actions" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-10 text-slate-900">What The Script Does</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Stop Services Card -->
+                <div class="card bg-white p-6 rounded-lg border border-slate-200 text-center">
+                    <div class="text-5xl mb-4">🛑</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-900">1. Stops Services</h3>
+                    <p class="text-slate-600">Temporarily halts the core Windows Update services (`wuauserv`, `bits`, `cryptsvc`) to safely access and delete their files.</p>
+                </div>
+                <!-- Delete Cache Card -->
+                <div class="card bg-white p-6 rounded-lg border border-slate-200 text-center">
+                    <div class="text-5xl mb-4">🗑️</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-900">2. Deletes Cache</h3>
+                    <p class="text-slate-600">Removes downloaded update files and history from system folders, which can free up several gigabytes of disk space.</p>
+                </div>
+                <!-- Pause Updates Card -->
+                <div class="card bg-white p-6 rounded-lg border border-slate-200 text-center">
+                    <div class="text-5xl mb-4">⏸️</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-900">3. Pauses Updates</h3>
+                    <p class="text-slate-600">Instructs Windows to pause automatic updates for 28 days, giving you control over when your system updates.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Safety First -->
+        <section id="safety" class="mb-20">
+             <div class="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-lg">
+                <h2 class="text-3xl font-bold mb-4 text-amber-900 flex items-center">
+                    <span class="text-4xl mr-3">⚠️</span> Safety First: Read Before Use
+                </h2>
+                <p class="text-amber-800 mb-6">This script performs advanced system modifications. Understanding the following points is crucial for using it safely and avoiding unintended consequences.</p>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="font-bold text-amber-600 mr-2 text-xl">🛡️</span>
+                        <div><strong class="text-amber-900">Administrator Privileges Required:</strong> The script will fail without them. You must run it as an administrator to allow it to modify system services and delete protected files.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold text-amber-600 mr-2 text-xl">💾</span>
+                        <div><strong class="text-amber-900">Use At Your Own Risk:</strong> While tested, you are responsible for its use. Always back up important data before running any system utility.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold text-amber-600 mr-2 text-xl">📜</span>
+                        <div><strong class="text-amber-900">Update History is Deleted:</strong> The script clears your update history log. This is not harmful, but your list of installed updates in Settings will be empty initially.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="font-bold text-amber-600 mr-2 text-xl">🦠</span>
+                        <div><strong class="text-amber-900">Potential Antivirus Flags:</strong> Do not convert this script to an `.exe`. The actions it performs (stopping services, deleting system files) mimic malware behavior, which can trigger false positives from antivirus software. Always use the raw `.bat` file.</div>
+                    </li>
+                </ul>
+             </div>
+        </section>
+
+        <!-- Section 4: How-To Guide -->
+        <section id="how-to" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-10 text-slate-900">How to Use the Script</h2>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-6 rounded-lg border border-slate-200">
+                    <div class="text-sky-500 text-4xl mb-4">①</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-900">Download</h3>
+                    <p class="text-slate-600">Get the script by using the "Copy Code" button in the next section.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-slate-200">
+                    <div class="text-sky-500 text-4xl mb-4">②</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-900">Save</h3>
+                    <p class="text-slate-600">Paste the code into a text editor and save it as `cleanup.bat` (the `.bat` part is crucial).</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-slate-200">
+                    <div class="text-sky-500 text-4xl mb-4">③</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-900">Run as Admin</h3>
+                    <p class="text-slate-600">Right-click the `cleanup.bat` file and select "Run as administrator."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: The Code -->
+        <section id="code">
+            <h2 class="text-3xl font-bold text-center mb-4 text-slate-900">Explore the Code</h2>
+            <p class="text-center text-slate-600 mb-10">Hover over any line in the script below to see a detailed explanation of what it does.</p>
+            
+            <div class="bg-slate-900 rounded-lg p-6 relative">
+                <button id="copyButton" class="absolute top-4 right-4 bg-slate-700 text-white py-1 px-3 rounded-md text-sm hover:bg-slate-600">Copy Code</button>
+                <pre><code id="script-content" class="text-white font-mono text-sm leading-relaxed">
+<span class="code-line" data-tooltip="Turns off command echoing, so you only see the script's output."><span class="text-green-400">@echo off</span></span>
+<span class="code-line" data-tooltip="Displays a title for the script."><span class="text-green-400">echo ===============================================</span></span>
+<span class="code-line" data-tooltip="Displays a title for the script."><span class="text-green-400">echo     Clearing Downloaded Windows Update Files...</span></span>
+<span class="code-line" data-tooltip="Displays a title for the script."><span class="text-green-400">echo ===============================================</span></span>
+
+<span class="code-line" data-tooltip="This is a comment indicating the start of Step 1."><span class="text-gray-500">:: Step 1: Stop Windows Update Services</span></span>
+<span class="code-line" data-tooltip="Stops the main Windows Update service."><span class="text-yellow-400">net stop wuauserv</span></span>
+<span class="code-line" data-tooltip="Stops the Background Intelligent Transfer Service, used for downloads."><span class="text-yellow-400">net stop bits</span></span>
+<span class="code-line" data-tooltip="Stops the Cryptographic Services, used to verify file signatures."><span class="text-yellow-400">net stop cryptsvc</span></span>
+
+<span class="code-line" data-tooltip="This is a comment indicating the start of Step 2."><span class="text-gray-500">:: Step 2: Delete Update Cache</span></span>
+<span class="code-line" data-tooltip="Deletes the folder containing all downloaded update files."><span class="text-red-400">rd /s /q %windir%\SoftwareDistribution\Download</span></span>
+<span class="code-line" data-tooltip="Deletes the database that stores your Windows Update history."><span class="text-red-400">rd /s /q %windir%\SoftwareDistribution\DataStore</span></span>
+<span class="code-line" data-tooltip="Deletes the catalog of file signatures. This is rebuilt automatically."><span class="text-red-400">rd /s /q %windir%\System32\catroot2</span></span>
+
+<span class="code-line" data-tooltip="This is a comment indicating the start of Step 4."><span class="text-gray-500">:: Step 4: Pause Updates for 4 Weeks (28 days)</span></span>
+<span class="code-line" data-tooltip="Uses PowerShell to set the Windows Update service startup type to Manual."><span class="text-cyan-400">powershell -Command "Set-Service -Name wuauserv -StartupType Manual"</span></span>
+<span class="code-line" data-tooltip="Uses PowerShell to pause automatic updates for 28 days from now."><span class="text-cyan-400">powershell -Command "(New-Object -ComObject Microsoft.Update.AutoUpdate).PauseAutomaticUpdates([datetime]::Now.AddDays(28))"</span></span>
+
+<span class="code-line" data-tooltip="Displays a completion message."><span class="text-green-400">echo.</span></span>
+<span class="code-line" data-tooltip="Displays a completion message."><span class="text-green-400">echo ===============================================</span></span>
+<span class="code-line" data-tooltip="Confirms that the cache has been cleared."><span class="text-green-400">echo     Windows Update Cache Cleared</span></span>
+<span class="code-line" data-tooltip="Confirms that updates have been paused."><span class="text-green-400">echo     Updates Paused for 4 Weeks</span></span>
+<span class="code-line" data-tooltip="Reminds the user that the services are stopped."><span class="text-green-400">echo     Services Remain Stopped</span></span>
+<span class="code-line" data-tooltip="Displays a completion message."><span class="text-green-400">echo ===============================================</span></span>
+<span class="code-line" data-tooltip="Pauses the script, waiting for the user to press a key before closing."><span class="text-yellow-400">pause</span></span>
+                </code></pre>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 mt-12 border-t border-slate-200">
+        <p class="text-slate-500">This guide is for educational purposes. Use system scripts responsibly.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Tooltip functionality
+            const codeLines = document.querySelectorAll('.code-line');
+            let tooltipElement = null;
+
+            const createTooltip = (text) => {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip bg-slate-700 text-white text-xs rounded py-1 px-2 pointer-events-none';
+                tooltip.textContent = text;
+                return tooltip;
+            };
+
+            codeLines.forEach(line => {
+                const tooltipText = line.getAttribute('data-tooltip');
+                if (tooltipText) {
+                    const tooltip = createTooltip(tooltipText);
+                    line.appendChild(tooltip);
+                }
+            });
+
+            // Copy to clipboard
+            const copyButton = document.getElementById('copyButton');
+            const scriptContent = document.getElementById('script-content');
+
+            copyButton.addEventListener('click', () => {
+                const textToCopy = scriptContent.innerText;
+                
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyButton.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyButton.textContent = 'Copy Code';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    copyButton.textContent = 'Error';
+                }
+                document.body.removeChild(tempTextArea);
+            });
+        });
+    </script>
+</body>
+</html>
