@@ -1,76 +1,31 @@
-Windows Update Cleanup and Pause Script
-This repository contains a simple, yet powerful, batch script designed to manage your Windows Update files and services. The script performs three key actions:
+# Windows Update Cleanup Script
 
-Stops core Windows Update services.
+This repository contains a simple batch script to help manage the Windows Update process by clearing cached files and temporarily pausing updates.
 
-Deletes the temporary files and cached updates to free up disk space.
+### What It Does
 
-Pauses future Windows Updates for a period of 4 weeks (28 days).
+The script performs the following actions:
+1.  **Stops Windows Update Services:** It temporarily stops the `wuauserv`, `bits`, and `cryptsvc` services, which are related to Windows Update.
+2.  **Clears the Cache:** It deletes temporary and cached update files from the `SoftwareDistribution` and `catroot2` folders.
+3.  **Pauses Updates:** It uses a PowerShell command to pause automatic Windows Updates for 28 days (4 weeks).
+4.  **Keeps Services Stopped:** The script leaves the services in a stopped state. You will need to manually restart them or reboot your computer to resume normal update behavior.
 
-This tool is particularly useful for users who need to quickly reclaim disk space on their system or who want to temporarily delay an update.
+### How to Use
 
-⚠️ Important Disclaimers
-Administrator Privileges: This script requires administrator privileges to run correctly. The commands to stop services and delete files in system directories will not work otherwise.
+1.  **Download the script:** Download the `cleanup_script.bat` file from this repository.
+2.  **Run as Administrator:** Right-click the file and select **"Run as administrator."** This is **mandatory** for the script to have the necessary permissions to stop services and delete system files.
+3.  **Follow the prompts:** The script will display a command-line interface with messages as it performs each step.
+4.  **Press any key to exit:** Once the process is complete, the script will pause. Press any key to close the window.
 
-Use with Caution: While the script is designed to be safe, it modifies system directories and services. Use it at your own risk. Always ensure you have a backup of your important files.
+### Important Disclaimers
 
-Windows Update Behavior: The script permanently deletes the Windows Update download cache and the update history. Your update history will be empty after running this script, and Windows will rebuild it over time.
+* **Use at your own risk:** This script modifies system settings and files. While it is designed to be safe, it is provided without any warranty.
+* **Administrator rights are required:** The script will not function correctly without being run with administrator privileges.
+* **Consider a system restore point:** Before running any script that modifies your system, it is highly recommended to create a system restore point.
 
-Third-Party Executables: The original batch script is provided. Creating an executable from this script is not recommended due to potential false positives from antivirus software, which may flag the file as malicious due to its system-level actions.
+---
 
-How to Use
-Download the Script: Clone or download the entire repository to your local machine, or simply copy the code from cleanup_script.bat into a new file on your computer.
+### Author & Project
 
-Save the File: Save the file with a .bat extension, for example, windows_cleanup.bat.
-
-Run as Administrator:
-
-Right-click on the windows_cleanup.bat file.
-
-Select "Run as administrator."
-
-Confirm the User Account Control (UAC) prompt to allow the script to make changes to your system.
-
-The script will then run automatically in the Command Prompt window, providing step-by-step feedback.
-
-Script Contents
-This is the batch script (cleanup_script.bat) contained within this repository.
-
-@echo off
-echo ===============================================
-echo     Clearing Downloaded Windows Update Files...
-echo ===============================================
-echo.
-
-:: Step 1: Stop Windows Update Services
-echo Stopping Windows Update Services...
-net stop wuauserv
-net stop bits
-net stop cryptsvc
-
-:: Step 2: Delete Update Cache
-echo Deleting cached update files...
-rd /s /q %windir%\SoftwareDistribution\Download
-rd /s /q %windir%\SoftwareDistribution\DataStore
-rd /s /q %windir%\System32\catroot2
-
-:: Step 3: Restart Services (Commented Out)
-:: echo Restarting Windows Update Services...
-:: net start wuauserv
-:: net start bits
-:: net start cryptsvc
-
-:: Step 4: Pause Updates for 4 Weeks (28 days)
-echo Pausing Windows Updates for 4 weeks...
-powershell -Command "Set-Service -Name wuauserv -StartupType Manual"
-powershell -Command "(New-Object -ComObject Microsoft.Update.ServiceManager).ClientApplicationID = 'ClearUpdateScript'"
-powershell -Command "Invoke-WebRequest -UseBasicParsing 'about:blank' > $null" 2>nul
-powershell -Command "(New-Object -ComObject Microsoft.Update.AutoUpdate).PauseAutomaticUpdates([datetime]::Now.AddDays(28))"
-
-echo.
-echo ===============================================
-echo     Windows Update Cache Cleared
-echo     Updates Paused for 4 Weeks
-echo     Services Remain Stopped
-echo ===============================================
-pause
+* **Author:** Sumit Singh Chhonker
+* **GitHub Repository:** https://github.com/chhonker
